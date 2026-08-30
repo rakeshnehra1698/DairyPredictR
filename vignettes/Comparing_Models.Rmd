@@ -1,0 +1,214 @@
+---
+Title: "Comparing Machine Learning Models with DairyPredictR"
+Author: "Dr. Rakesh Nehra and Dr. Pallavi Choudhary"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Comparing Machine Learning Models with DairyPredictR}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Introduction
+
+Selecting an appropriate machine learning algorithm is a critical step in developing accurate prediction models for dairy production traits. Different algorithms differ in their ability to model linear relationships, nonlinear interactions, and complex patterns present in dairy production data.
+
+**DairyPredictR** provides a unified framework for training, evaluating, and comparing multiple machine learning algorithms using identical training and testing datasets.
+
+This vignette demonstrates how to compare predictive performance and identify the most suitable model for milk yield prediction.
+
+# Supported Algorithms
+
+The current version of DairyPredictR includes the following algorithms:
+
+| Method | Algorithm |
+|---------|-----------|
+| linear | Multiple Linear Regression |
+| rf | Random Forest |
+| gbm | Gradient Boosting Machine |
+| svm | Support Vector Machine |
+| ann | Artificial Neural Network |
+
+Each model is trained using the same training dataset and evaluated using the same testing dataset, ensuring a fair comparison.
+
+# Load the Package
+
+```{r eval=FALSE}
+library(DairyPredictR)
+```
+
+# Import and Prepare Data
+
+```{r eval=FALSE}
+milk <- read_dairy("milk.csv")
+
+milk <- clean_data(milk)
+
+split <- split_data(
+  milk,
+  train_size = 0.80,
+  seed = 123
+)
+```
+
+# Compare Multiple Models
+
+The `compare_models()` function automatically trains all selected algorithms and evaluates their predictive performance.
+
+```{r eval=FALSE}
+results <- compare_models(
+  split,
+  target = "MilkYield305"
+)
+
+results
+```
+
+Example output:
+
+| Model | R² | RMSE | MAE | MAPE | Bias |
+|------|------:|------:|------:|------:|------:|
+| RF | 0.784 | 214.3 | 166.4 | 7.12 | -1.45 |
+| GBM | 0.772 | 221.5 | 171.6 | 7.39 | -2.18 |
+| SVM | 0.758 | 228.1 | 176.8 | 7.84 | -3.42 |
+| ANN | 0.745 | 234.9 | 181.3 | 8.06 | -4.31 |
+| Linear | 0.731 | 242.5 | 187.2 | 8.45 | -5.18 |
+
+# Performance Metrics
+
+DairyPredictR reports five commonly used evaluation statistics.
+
+## Coefficient of Determination (R²)
+
+R² measures the proportion of variation explained by the prediction model.
+
+Higher values indicate better predictive performance.
+
+## Root Mean Square Error (RMSE)
+
+RMSE measures the average prediction error while giving greater weight to large errors.
+
+Lower values indicate better performance.
+
+## Mean Absolute Error (MAE)
+
+MAE represents the average absolute difference between observed and predicted values.
+
+Lower MAE indicates more accurate predictions.
+
+## Mean Absolute Percentage Error (MAPE)
+
+MAPE expresses prediction error as a percentage.
+
+Lower percentages indicate improved prediction accuracy.
+
+## Bias
+
+Bias measures systematic over- or under-prediction.
+
+Values close to zero indicate unbiased predictions.
+
+# Visual Comparison
+
+Performance plots can be generated directly.
+
+```{r eval=FALSE}
+plots <- plot_performance(results)
+
+plots$R2
+plots$RMSE
+plots$MAE
+plots$MAPE
+plots$Bias
+```
+
+Figures may also be exported in PNG, PDF, and TIFF formats.
+
+```{r eval=FALSE}
+plot_performance(
+  results,
+  save = TRUE
+)
+```
+
+# Choosing the Best Model
+
+Model selection should consider multiple evaluation statistics rather than relying on a single metric.
+
+In general:
+
+- Higher R² indicates greater predictive ability.
+- Lower RMSE indicates smaller prediction errors.
+- Lower MAE reflects improved overall accuracy.
+- Lower MAPE indicates better percentage prediction accuracy.
+- Bias close to zero suggests unbiased predictions.
+
+No single algorithm is universally superior. The optimal model depends on the dataset, predictor variables, and biological relationships underlying milk production.
+
+# Recommendations
+
+For relatively linear relationships:
+
+- Multiple Linear Regression
+
+For complex nonlinear relationships:
+
+- Random Forest
+- Gradient Boosting Machine
+
+For high-dimensional predictor spaces:
+
+- Support Vector Machine
+
+For highly nonlinear prediction problems:
+
+- Artificial Neural Network
+
+Researchers are encouraged to compare several algorithms before selecting the final prediction model.
+
+# Example Workflow
+
+A complete model comparison can be completed in only a few steps.
+
+```{r eval=FALSE}
+milk <- read_dairy("milk.csv")
+
+milk <- clean_data(milk)
+
+split <- split_data(milk)
+
+results <- compare_models(
+  split,
+  target = "MilkYield305"
+)
+
+plot_performance(results)
+```
+
+# Summary
+
+DairyPredictR provides a unified interface for comparing multiple machine learning algorithms for dairy production traits. By combining standardized model training, consistent evaluation metrics, and publication-quality visualizations, the package simplifies model benchmarking and facilitates objective algorithm selection for dairy science research.
+
+# Future Developments
+
+Future versions of DairyPredictR will include:
+
+- Variable importance analysis
+- SHAP-based model interpretation
+- Hyperparameter tuning
+- Cross-validation
+- Model serialization
+- Additional machine learning algorithms
+
+# Session Information
+
+```{r}
+sessionInfo()
+```

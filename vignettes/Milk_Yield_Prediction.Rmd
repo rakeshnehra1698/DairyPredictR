@@ -1,0 +1,236 @@
+---
+Title: "Milk Yield Prediction Using DairyPredictR"
+Author: "Dr. Rakesh Nehra and Dr. Pallavi Choudhary"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Milk Yield Prediction Using DairyPredictR}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Introduction
+
+Accurate prediction of lactation milk yield plays an important role in dairy herd management, genetic improvement, and precision livestock farming. Early prediction enables farmers and breeders to identify superior animals, make informed culling decisions, optimize feeding strategies, and improve selection programs.
+
+**DairyPredictR** provides a simple workflow for developing and evaluating machine learning models for milk yield prediction using dairy production records.
+
+This vignette demonstrates a complete prediction workflow from data import to model evaluation.
+
+# Load the Package
+
+```{r eval=FALSE}
+library(DairyPredictR)
+```
+
+# Import Dairy Records
+
+Milk production records can be stored in CSV or Excel format.
+
+```{r eval=FALSE}
+milk <- read_dairy("milk.csv")
+```
+
+The imported dataset should contain one row per animal with predictor variables and the target milk yield trait.
+
+A typical dataset may include:
+
+| Variable | Description |
+|-----------|-------------|
+| AnimalID | Animal identification |
+| AFC | Age at first calving |
+| TD1 | Test-day milk yield 1 |
+| TD2 | Test-day milk yield 2 |
+| TD3 | Test-day milk yield 3 |
+| Parity | Lactation number |
+| Season | Season of calving |
+| Year | Year of calving |
+| MilkYield305 | 305-day milk yield |
+Predictor variables can be selected according to data availability. These may include daily milk yield records or weekly, bimonthly, monthly, or other test-day milk yield measurements.
+
+# Data Cleaning
+
+Prepare the dataset before model development.
+
+```{r eval=FALSE}
+milk <- clean_data(milk)
+```
+
+Typical preprocessing includes:
+
+- Removal of missing values
+- Removal of duplicate records
+- Standardization of variable names
+- Preparation of numeric predictors
+
+# Split Training and Testing Data
+
+Machine learning models should always be evaluated using independent testing data.
+
+```{r eval=FALSE}
+split <- split_data(
+  milk,
+  train_size = 0.80,
+  seed = 123
+)
+```
+
+This creates:
+
+- Training dataset (80%)
+- Testing dataset (20%)
+
+# Train a Random Forest Model
+
+Random Forest is one of the most widely used ensemble learning algorithms for predicting milk production traits.
+
+```{r eval=FALSE}
+rf_model <- fit_model(
+  data = split$train,
+  target = "MilkYield305",
+  method = "rf"
+)
+```
+
+# Generate Predictions
+
+Predict milk yield for animals in the testing dataset.
+
+```{r eval=FALSE}
+predicted <- predict(
+  rf_model,
+  split$test
+)
+```
+
+# Evaluate Prediction Accuracy
+
+Assess model performance using commonly reported prediction statistics.
+
+```{r eval=FALSE}
+evaluation <- evaluate(
+  rf_model,
+  split$test
+)
+
+evaluation
+```
+
+Performance metrics include:
+
+- Coefficient of determination (R²)
+- Root Mean Square Error (RMSE)
+- Mean Absolute Error (MAE)
+- Mean Absolute Percentage Error (MAPE)
+- Prediction Bias
+
+# Train Other Machine Learning Models
+
+DairyPredictR supports multiple prediction algorithms.
+
+## Multiple Linear Regression
+
+```{r eval=FALSE}
+linear_model <- fit_model(
+  split$train,
+  "MilkYield305",
+  method = "linear"
+)
+```
+
+## Gradient Boosting Machine
+
+```{r eval=FALSE}
+gbm_model <- fit_model(
+  split$train,
+  "MilkYield305",
+  method = "gbm"
+)
+```
+
+## Support Vector Machine
+
+```{r eval=FALSE}
+svm_model <- fit_model(
+  split$train,
+  "MilkYield305",
+  method = "svm"
+)
+```
+
+## Artificial Neural Network
+
+```{r eval=FALSE}
+ann_model <- fit_model(
+  split$train,
+  "MilkYield305",
+  method = "ann"
+)
+```
+
+# Compare Machine Learning Algorithms
+
+Rather than evaluating models individually, DairyPredictR can compare all algorithms simultaneously.
+
+```{r eval=FALSE}
+results <- compare_models(
+  split,
+  target = "MilkYield305"
+)
+
+results
+```
+
+Example output:
+
+| Model | R² | RMSE | MAE | MAPE |
+|------|------:|------:|------:|------:|
+| RF | 0.784 | 214.3 | 166.4 | 7.12 |
+| GBM | 0.768 | 221.7 | 170.8 | 7.35 |
+| SVM | 0.754 | 229.6 | 176.3 | 7.82 |
+| ANN | 0.742 | 235.1 | 181.5 | 8.06 |
+| Linear | 0.731 | 242.8 | 187.2 | 8.42 |
+
+# Visualize Model Performance
+
+Publication-quality comparison plots can be generated directly.
+
+```{r eval=FALSE}
+plot_performance(results)
+```
+
+The package generates figures for:
+
+- R²
+- RMSE
+- MAE
+- MAPE
+- Bias
+
+# Practical Applications
+
+DairyPredictR can be applied to:
+
+- Early prediction of lactation milk yield
+- Dairy herd management
+- Precision livestock farming
+- Genetic improvement programs
+- Selection of superior animals
+- Research in dairy production and animal breeding
+
+# Conclusion
+
+DairyPredictR provides an integrated workflow for milk yield prediction using modern machine learning algorithms. The package enables users to efficiently preprocess dairy records, train predictive models, compare algorithm performance, and generate publication-quality outputs within a unified R environment.
+
+# Session Information
+
+```{r}
+sessionInfo()
+```

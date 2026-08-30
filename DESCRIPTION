@@ -1,0 +1,35 @@
+Package: DairyPredictR
+Title: Machine Learning Toolkit for Dairy Milk Yield Prediction
+Version: 1.0.0
+Authors@R: c(
+    person("Rakesh", "Nehra",
+           email = "rakeshnehra1698@gmail.com",
+           role = c("aut", "cre")),
+    person("Pallavi", "Choudhary",
+           email = "pallavichoudharybkn@gmail.com",
+           role = "aut")
+    )
+Description: Provides tools for data preparation, machine learning-based
+    prediction, comparative evaluation, model explainability, and prediction
+    of dairy milk yield. The package supports linear regression, random forest,
+    gradient boosting, support vector machine, and artificial neural network
+    models.
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+Imports:
+    gbm,
+    randomForest,
+    readxl,
+    e1071,
+    neuralnet,
+    ggplot2,
+    rlang
+Suggests:
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+VignetteBuilder: knitr
+Config/roxygen2/version: 8.1.0

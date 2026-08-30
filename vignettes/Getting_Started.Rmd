@@ -1,0 +1,232 @@
+---
+Title: "Getting Started with DairyPredictR"
+author: "Dr. Rakesh Nehra and Dr. Pallavi Choudhary"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting Started with DairyPredictR}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Introduction
+
+**DairyPredictR** is an R package developed for machine learning-based prediction of dairy lactation milk yield. It provides an easy-to-use workflow for importing, preprocessing, training, evaluating, and comparing various models.
+
+The package currently supports the following machine learning algorithms:
+
+- Multiple Linear Regression (MLR)
+- Random Forest (RF)
+- Gradient Boosting Machine (GBM)
+- Support Vector Machine (SVM)
+- Artificial Neural Network (ANN)
+
+
+# Installation
+
+Install the package from the local source file.
+
+```{r eval=FALSE}
+install.packages("DairyPredictR_1.0.0.tar.gz",
+                 repos = NULL,
+                 type = "source")
+```
+
+Load the package.
+
+```{r eval=FALSE}
+library(DairyPredictR)
+```
+
+# Typical Workflow
+
+The complete workflow consists of six simple steps.
+
+```Raw Data
+    │
+    ▼
+read_dairy()
+    │
+    ▼
+clean_data()
+    │
+    ▼
+split_data()
+    │
+    ▼
+fit_model()
+    │
+    ▼
+predict()
+    │
+    ▼
+evaluate()```
+
+# Step 1: Import Data
+
+Read dairy production records.
+
+```{r eval=FALSE}
+milk <- read_dairy("milk.csv")
+```
+
+Supported formats include
+
+- CSV
+- XLS
+- XLSX
+
+# Step 2: Data Cleaning
+
+Clean missing values and prepare the dataset.
+
+```{r eval=FALSE}
+milk <- clean_data(milk)
+```
+
+# Step 3: Split Data
+
+Split the data into training and testing datasets.
+
+```{r eval=FALSE}
+split <- split_data(
+  milk,
+  train_size = 0.80,
+  seed = 123
+)
+```
+
+# Step 4: Train a Model
+
+Train a Random Forest model.
+
+```{r eval=FALSE}
+rf_model <- fit_model(
+  data = split$train,
+  target = "MilkYield305",
+  method = "rf"
+)
+```
+
+Available methods are
+
+- "linear"
+- "rf"
+- "gbm"
+- "svm"
+- "ann"
+
+# Step 5: Generate Predictions
+
+Predict milk yield for the testing dataset.
+
+```{r eval=FALSE}
+pred <- predict(
+  rf_model,
+  split$test
+)
+```
+
+# Step 6: Evaluate Model Performance
+
+Evaluate prediction accuracy.
+
+```{r eval=FALSE}
+evaluate(
+  rf_model,
+  split$test
+)
+```
+
+Example output
+
+| Metric | Value |
+|---------|------:|
+| R² | 0.78 |
+| RMSE | 214.35 |
+| MAE | 166.48 |
+| MAPE | 7.12 |
+| Bias | -1.45 |
+
+# Compare Multiple Models
+
+Compare several machine learning algorithms simultaneously.
+
+```{r eval=FALSE}
+results <- compare_models(
+  split,
+  target = "MilkYield305"
+)
+```
+
+Example output
+
+| Model | R² | RMSE | MAE |
+|--------|---:|------:|------:|
+| RF | 0.784 | 214.35 | 166.48 |
+| SVM | 0.776 | 221.11 | 170.42 |
+| GBM | 0.761 | 228.87 | 175.63 |
+| Linear | 0.742 | 239.91 | 183.25 |
+| ANN | 0.731 | 244.62 | 187.54 |
+
+# Plot Performance
+
+Generate publication-quality figures.
+
+```{r eval=FALSE}
+plot_performance(results)
+```
+
+Plots are produced for
+
+- R²
+- RMSE
+- MAE
+- MAPE
+- Bias
+
+Figures may also be exported in PNG, PDF, and TIFF formats.
+
+# Package Workflow Summary
+
+The recommended analysis workflow is
+
+1. Import data
+2. Clean data
+3. Split dataset
+4. Train machine learning model
+5. Generate predictions
+6. Evaluate performance
+7. Compare algorithms
+8. Create publication-quality figures
+
+# Citation
+
+If you use DairyPredictR in your research, please cite the package in your publication.
+
+# License
+
+DairyPredictR is distributed under the GPL-3 License.
+
+# Author
+
+**Dr. Rakesh Nehra**
+
+Department of Animal Genetics and Breeding
+
+Lala lajpat rai university of veterinary and animal sciences,
+
+Hisar, Haryana, India
+
+# Session Information
+
+```{r}
+sessionInfo()
+```

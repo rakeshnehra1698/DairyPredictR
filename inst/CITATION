@@ -1,0 +1,17 @@
+citHeader("To cite DairyPredictR in publications use:")
+
+citEntry(
+  entry = "Manual",
+  title = "DairyPredictR: Machine Learning Toolkit for Dairy Milk Yield Prediction",
+  author = c(
+    person("Rakesh", "Nehra"),
+    person("Pallavi", "Choudhary")
+  ),
+  year = "2026",
+  note = "R package version 1.0.0",
+  textVersion = paste(
+    "Nehra, R. and Choudhary, P. (2026).",
+    "DairyPredictR: Machine Learning Toolkit for Dairy Milk Yield Prediction.",
+    "R package version 1.0.0."
+  )
+)
